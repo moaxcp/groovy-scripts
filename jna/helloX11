@@ -1,0 +1,22 @@
+#!/usr/bin/env groovy
+
+@Grapes(
+    @Grab(group='net.java.dev.jna', module='jna-platform', version='4.5.0')
+)
+
+import com.sun.jna.platform.unix.X11
+
+def display = X11.INSTANCE.XOpenDisplay(null)
+if(display == null) {
+    throw new IllegalStateException('Can\'t open default display')
+}
+def root = X11.INSTANCE.XRootWindow(display, X11.INSTANCE.XDefaultScreen(display))
+if(root == null) {
+    throw new IllegalStateException('Can\'t find root window')
+}
+
+
+
+if(display != null) {
+    X11.INSTANCE.XCloseDisplay(display)
+}
