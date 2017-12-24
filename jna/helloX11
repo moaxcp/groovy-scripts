@@ -1,4 +1,8 @@
-#!/usr/bin/env groovy
+#!/usr/bin/env nix-shell
+/*
+#!nix-shell -i groovy
+#!nix-shell deps.nix
+*/
 
 @Grapes(
     @Grab(group='net.java.dev.jna', module='jna-platform', version='4.5.0')
