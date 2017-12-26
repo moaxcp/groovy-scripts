@@ -9,18 +9,44 @@
 )
 
 import com.sun.jna.platform.unix.X11
+import com.sun.jna.NativeLong
 
-def display = X11.INSTANCE.XOpenDisplay(null)
-if(display == null) {
-    throw new IllegalStateException('Can\'t open default display')
-}
-def root = X11.INSTANCE.XRootWindow(display, X11.INSTANCE.XDefaultScreen(display))
-if(root == null) {
-    throw new IllegalStateException('Can\'t find root window')
-}
+X11.INSTANCE.with {
 
+    def display = XOpenDisplay(null)
+    def screen = XDefaultScreen(display)
+    def root = XDefaultRootWindow(display)
+    def window = XCreateSimpleWindow(display, root, 100, 100, 275, 120, 1, 1, 0)
+    def gc = XCreateGC(display, window, new NativeLong(0), null)
 
+    XSetForeground(display, gc, new NativeLong(0))
+    XSetBackground(display, gc, new NativeLong(100))
+    XSelectInput(display, window, new NativeLong(KeyPressMask | ExposureMask))
+    XMapRaised(display, window)
 
-if(display != null) {
-    X11.INSTANCE.XCloseDisplay(display)
+    def start = System.currentTimeMillis()
+
+    while(System.currentTimeMillis() - start < 10 * 1000) {
+        def event = new X11.XEvent()
+        XNextEvent(display, event)
+        switch(event.type) {
+            case Expose:
+                if(event.xexpose.count == 0) {
+                    //XDrawImageString(event.xexpose.display, event.xexpose.window, gc, 105, 65, ...)
+                }
+                break
+            case MappingNotify:
+                //XRefreshKeybaordMapping(event)
+                break
+
+            case KeyPress:
+                //int keycount = XLookupString(event, ...
+                //finish application
+                break                
+        }
+    }
+
+    XFreeGC(display, gc)
+    XDestroyWindow(display, window)
+    XCloseDisplay(display)
 }
