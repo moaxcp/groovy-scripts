@@ -5,7 +5,7 @@
 */
 
 @Grapes(
-    @Grab(group='net.java.dev.jna', module='jna-platform', version='4.5.0')
+    @Grab(group='net.java.dev.jna', module='jna-platform', version='4.5.1')
 )
 
 import com.sun.jna.platform.unix.X11
